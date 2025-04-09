@@ -1,0 +1,66 @@
+import { Link } from "react-router-dom";
+import Logo from "../assets/logo.png";
+import { useState,useEffect,useRef } from "react";
+import { Search } from "./Search";
+import { DropdownLoggedIn } from "./DropdownLoggedin";
+import { DropdownLoggedOut } from "./Dropdownloggedout";
+import { useCart } from "../contexts";
+
+export const Header = () => {
+  const {cartList} = useCart();
+  const [darkmode,setDarkmode]=useState(JSON.parse(localStorage.getItem("darkMode"))|| false);
+  const [search,setSearch] =useState(false)
+  const [dropdown,setDropdown]=useState(false)
+  const token=JSON.parse(sessionStorage.getItem("token"))
+  const dropdownRef=useRef();
+  
+
+  useEffect(() => {
+    localStorage.setItem("darkMode",JSON.stringify(darkmode))
+    if(darkmode){
+      document.documentElement.classList.add('dark') 
+    }else{
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkmode])
+    
+  useEffect(() => {
+          const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+              setDropdown(false);
+            }
+          };
+      
+          document.addEventListener("mousedown", handleClickOutside);
+          return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+          };
+        }, []);
+  
+  return (
+    <header>      
+      <nav className="bg-white dark:bg-gray-900">
+          <div className="border-b border-slate-200 dark:border-b-0 flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4 md:px-6 py-3">
+              <Link to="/" className="flex items-center">
+                  <img src={Logo} className="mr-3 h-10" alt="CodeBook Logo" />
+                  <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">CodeBook</span>
+              </Link>
+              <div className="flex items-center relative">
+                  <span onClick={()=>setDarkmode(!darkmode)} className="cursor-pointer text-xl text-gray-700 dark:text-white mr-5 bi bi-gear-wide-connected"></span>
+                  <span  onClick={()=>setSearch(!search)} className="cursor-pointer text-xl text-gray-700 dark:text-white mr-5 bi bi-search"></span>
+                  <Link to="/cart" className="text-gray-700 dark:text-white mr-5">
+                    <span className="text-2xl bi bi-cart-fill relative">
+                    <span className="text-white text-sm absolute -top-1 left-2.5 bg-rose-500 px-1 rounded-full ">{cartList.length}</span>
+                    </span>                    
+                  </Link>
+                  <span onClick={()=>setDropdown(!dropdown)} className="bi bi-person-circle cursor-pointer text-2xl text-gray-700 dark:text-white"></span>
+                  {dropdown && (token ?<DropdownLoggedIn dropdownRef={dropdownRef} setDropdown={setDropdown}/> :<DropdownLoggedOut dropdownRef={dropdownRef} setDropdown={setDropdown}/>)}
+              </div>
+          </div>
+      </nav>
+      {search && <Search  setSearch={setSearch} />}
+
+      
+    </header>
+  )
+}
