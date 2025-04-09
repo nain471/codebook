@@ -1,7 +1,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { getUser, logout } from "../services";
-import { useState ,useEffect, useRef} from "react";
+import { useState ,useEffect} from "react";
 
 export const DropdownLoggedIn = ({setDropdown,dropdownRef}) => {
     const navigate =useNavigate();
@@ -14,7 +14,7 @@ export const DropdownLoggedIn = ({setDropdown,dropdownRef}) => {
         data.email?setUser(data):handleLogout();
      }
      fetchData();
-    }, [])
+    }, [])//eslint-disable-line
     
     function handleLogout(){
         logout();
