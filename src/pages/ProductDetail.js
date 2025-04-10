@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import { Rating } from "../components";
+import { getProduct } from "../services";
 import useTitle from "../hooks/useTitle";
 import { useCart } from "../contexts";
-import { getProduct } from "../services";
 
 
 
@@ -16,7 +16,7 @@ export const ProductDetail = () => {
   useEffect(() => {
     const ProductDetail = async ()=>{
         const data = await getProduct(id);
-        setProduct(data)
+        setProduct(data);
       }
       ProductDetail()
   }, [id]);
